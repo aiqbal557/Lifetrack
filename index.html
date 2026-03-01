@@ -613,7 +613,7 @@ async function claude(system, user) {
         'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        model: 'claude-3-5-haiku-20241022',
+        model: 'claude-haiku-4-5-20251001', // confirmed valid model string
         max_tokens: 600,
         system: system,
         messages: [{ role: 'user', content: user }]
