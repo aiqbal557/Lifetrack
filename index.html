@@ -244,12 +244,12 @@ padding: 10px 13px; transition: border-color 0.2s;
 .input-inner:focus-within { border-color: var(–accent); }
 #msgInput {
 width: 100%; background: none; border: none; outline: none;
-color: var(–text); font-family: ‘DM Mono’, monospace;
+color: #e8e8f0 !important; -webkit-text-fill-color: #e8e8f0 !important; font-family: ‘DM Mono’, monospace; caret-color: #7c6aff;
 font-size: 13px; line-height: 1.5;
 resize: none; max-height: 90px; overflow-y: auto;
 display: block;
 }
-#msgInput::placeholder { color: var(–dimmer); }
+#msgInput::placeholder { color: #3a3a50 !important; -webkit-text-fill-color: #3a3a50 !important; }
 .send {
 width: 40px; height: 40px; flex-shrink: 0;
 border-radius: 10px; background: var(–accent);
@@ -429,7 +429,8 @@ async function send() {
   const text = inp.value.trim();
   if (!text) return;
   inp.value = ''; inp.style.height = 'auto';
-  document.getElementById('sendBtn').disabled = true;
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = true;
 
   addUserMsg(text);
   addThinking();
@@ -439,10 +440,10 @@ async function send() {
     else await doLog(text);
   } catch(e) {
     removeThinking();
-    addBotMsg('Error: ' + e.message);
+    addBotMsg('⚠️ ' + (e.message || 'Unknown error - try again.'));
+  } finally {
+    btn.disabled = false;
   }
-
-  document.getElementById('sendBtn').disabled = false;
 }
 
 // ── MESSAGES ───────────────────────────────────────────────────────────────
@@ -620,6 +621,7 @@ async function claude(system, user) {
       })
     });
   } catch(e) {
+    removeThinking();
     throw new Error('Network error — check your connection. (' + e.message + ')');
   }
 
