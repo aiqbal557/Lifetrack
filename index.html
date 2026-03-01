@@ -310,6 +310,7 @@ color: var(–dimmer); font-size: 12px; line-height: 1.9;
   <div>
     <div class="header-title">LIFETRACK</div>
     <div class="header-date" id="hDate"></div>
+  <div style="font-size:9px;color:#3a3a50;margin-top:1px;letter-spacing:0.05em;">v1.3 · localStorage</div>
   </div>
   <div class="tabs">
     <button class="tab on" id="tLog" onclick="goTab('log')">LOG</button>
@@ -379,8 +380,8 @@ const COLORS = { learning:'c-learning', fitness:'c-fitness', sleep:'c-sleep', wo
 
 // ── BOOT ───────────────────────────────────────────────────────────────────
 window.onload = () => {
-  const k = sessionStorage.getItem('lt_k');
-  if (k) { KEY = k; launch(); }
+  const k = sessionStorage.getItem('lt_k') || localStorage.getItem('lt_key');
+  if (k) { KEY = k; launch(); loadRecentEntries(); }
 };
 
 function startApp() {
@@ -390,6 +391,7 @@ function startApp() {
   err.style.display = 'none';
   KEY = k;
   sessionStorage.setItem('lt_k', k);
+  localStorage.setItem('lt_key', k);
   launch();
 }
 
@@ -401,6 +403,22 @@ function launch() {
   document.getElementById('appWrap').style.flex = '1';
   document.getElementById('appWrap').style.overflow = 'hidden';
   document.getElementById('hDate').textContent = new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}).toUpperCase();
+}
+
+function loadRecentEntries() {
+  // Show last 5 entries as cards on load so user sees history
+  const recent = logs.slice(-5);
+  if (!recent.length) return;
+  const m = document.getElementById('messages');
+  const divider = document.createElement('div');
+  divider.style.cssText = 'text-align:center;font-size:10px;color:#3a3a50;padding:4px 0;letter-spacing:0.08em;';
+  divider.textContent = '── previous entries ──';
+  m.appendChild(divider);
+  recent.forEach(e => showCard(e));
+  const divider2 = document.createElement('div');
+  divider2.style.cssText = 'text-align:center;font-size:10px;color:#3a3a50;padding:4px 0;letter-spacing:0.08em;';
+  divider2.textContent = '── today ──';
+  m.appendChild(divider2);
 }
 
 // ── TABS ───────────────────────────────────────────────────────────────────
