@@ -310,7 +310,7 @@ color: var(–dimmer); font-size: 12px; line-height: 1.9;
   <div>
     <div class="header-title">LIFETRACK</div>
     <div class="header-date" id="hDate"></div>
-  <div style="font-size:9px;color:#3a3a50;margin-top:1px;letter-spacing:0.05em;">v1.3 · localStorage</div>
+  <div style="font-size:9px;color:#3a3a50;margin-top:1px;letter-spacing:0.05em;">v1.4 · localStorage</div>
   </div>
   <div class="tabs">
     <button class="tab on" id="tLog" onclick="goTab('log')">LOG</button>
@@ -342,7 +342,7 @@ color: var(–dimmer); font-size: 12px; line-height: 1.9;
   <div id="chatView">
     <div id="messages">
       <div class="welcome">
-        <div class="welcome-title">Good to go. Just talk.</div>
+        <div class="welcome-title" id="welcomeTitle">Good to go. Just talk.</div>
         <div class="welcome-text">Type anything throughout your day. Log events, ask questions — no forms, no categories needed.</div>
         <div class="examples">
           <div class="ex" onclick="useEx(this)">"just woke up, slept well, feeling good"</div>
@@ -403,11 +403,16 @@ function launch() {
   document.getElementById('appWrap').style.flex = '1';
   document.getElementById('appWrap').style.overflow = 'hidden';
   document.getElementById('hDate').textContent = new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}).toUpperCase();
+  setTimeout(loadRecentEntries, 100);
 }
 
 function loadRecentEntries() {
-  // Show last 5 entries as cards on load so user sees history
+  // Re-read fresh from localStorage
+  logs = JSON.parse(localStorage.getItem('lt_logs') || '[]');
   const recent = logs.slice(-5);
+  console.log('Loaded', logs.length, 'entries from localStorage');
+  const t = document.getElementById('welcomeTitle');
+  if (t && logs.length > 0) t.textContent = logs.length + ' entries logged. Keep going.';
   if (!recent.length) return;
   const m = document.getElementById('messages');
   const divider = document.createElement('div');
